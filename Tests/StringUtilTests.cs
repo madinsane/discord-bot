@@ -58,6 +58,12 @@ namespace Tests
             Assert.That(canonical.ToLower(), Is.EqualTo(strB.ToCanonicalForm().ToLower()));
         }
 
+        [TestCase("ǝɹɐǝdsǝʞɐɥs", "shakespeare")]
+        public void FlipTest(string strA, string strB)
+        {
+            Assert.That(strA.StripInvisibleAndDiacritics().FlipString(), Is.EqualTo(strB));
+        }
+
         [TestCase("jò̵͗s̷̑͠ẻ̵͝p̸̆̂h̸͐̿", "joseph")]
         public void StripZalgoTest(string input, string expected)
         {

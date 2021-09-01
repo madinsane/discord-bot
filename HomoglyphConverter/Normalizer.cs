@@ -86,6 +86,94 @@ namespace HomoglyphConverter
             return Utf32.GetString(resultBytes);
         }
 
+        public static string FlipString(this string input)
+        {
+            var utf32Input = Utf32.GetBytes(input);
+            var convertedLength = utf32Input.Length / 4;
+            var uintInput = convertedLength < 256 / sizeof(uint) ? stackalloc uint[convertedLength] : new uint[convertedLength];
+            for (var i = 0; i < uintInput.Length; i++)
+                uintInput[i] = BitConverter.ToUInt32(utf32Input, i * 4);
+            var result = new List<uint>(convertedLength);
+            foreach (var ch in uintInput)
+            {
+                if (FlipDict.TryGetValue(ch, out var replacementExtra))
+                    result.AddRange(replacementExtra);
+                else
+                    result.Add(ch);
+            }
+            var resultBytes = (
+                from ch in result
+                from b in BitConverter.GetBytes(ch)
+                select b
+            ).ToArray();
+            string resultString = Utf32.GetString(resultBytes);
+            char[] strArray = resultString.ToCharArray();
+            Array.Reverse(strArray);
+            return new string(strArray);
+        }
+
+        private static readonly Dictionary<uint, uint[]> FlipDict = new()
+        {
+            [0x00A1u] = new[] { 0x0021u },
+            [0x201Eu] = new[] { 0x0022u },
+            [0x214Bu] = new[] { 0x0026u },
+            [0x002Cu] = new[] { 0x0027u },
+            [0x0029u] = new[] { 0x0028u },
+            [0x02D9u] = new[] { 0x002Eu },
+            [0x0190u] = new[] { 0x0033u },
+            [0x152Du] = new[] { 0x0034u },
+            [0x0039u] = new[] { 0x0036u },
+            [0x2C62u] = new[] { 0x0037u },
+            [0x061Bu] = new[] { 0x003Bu },
+            [0x003Eu] = new[] { 0x003Cu },
+            [0x00BFu] = new[] { 0x003Fu },
+            [0x2200u] = new[] { 0x0041u },
+            [0x10412u] = new[] { 0x0042u },
+            [0x2183u] = new[] { 0x0043u },
+            [0x25D6u] = new[] { 0x0044u },
+            [0x018Eu] = new[] { 0x0045u },
+            [0x2132u] = new[] { 0x0046u },
+            [0x2141u] = new[] { 0x0047u },
+            [0x017Fu] = new[] { 0x004Au },
+            [0x22CAu] = new[] { 0x004Bu },
+            [0x2142u] = new[] { 0x004Cu },
+            [0x0057u] = new[] { 0x004Du },
+            [0x1D0Eu] = new[] { 0x004Eu },
+            [0x0500u] = new[] { 0x0050u },
+            [0x038Cu] = new[] { 0x0051u },
+            [0x1D1Au] = new[] { 0x0052u },
+            [0x22A5u] = new[] { 0x0054u },
+            [0x2229u] = new[] { 0x0055u },
+            [0x1D27u] = new[] { 0x0056u },
+            [0x2144u] = new[] { 0x0059u },
+            [0x005Du] = new[] { 0x005Bu },
+            [0x203Eu] = new[] { 0x005Fu },
+            [0x0250u] = new[] { 0x0061u },
+            [0x0071u] = new[] { 0x0062u },
+            [0x0254u] = new[] { 0x0063u },
+            [0x0070u] = new[] { 0x0064u },
+            [0x0064u] = new[] { 0x0070u },
+            [0x01DDu] = new[] { 0x0065u },
+            [0x025Fu] = new[] { 0x0066u },
+            [0x0183u] = new[] { 0x0067u },
+            [0x0265u] = new[] { 0x0068u },
+            [0x0131u] = new[] { 0x0069u },
+            [0x027Eu] = new[] { 0x006Au },
+            [0x029Eu] = new[] { 0x006Bu },
+            [0x0283u] = new[] { 0x006Cu },
+            [0x026Fu] = new[] { 0x006Du },
+            [0x0075u] = new[] { 0x006Eu },
+            [0x0279u] = new[] { 0x0072u },
+            [0x0287u] = new[] { 0x0074u },
+            [0x028Cu] = new[] { 0x0076u },
+            [0x028Du] = new[] { 0x0077u },
+            [0x028Eu] = new[] { 0x0079u },
+            [0x007Du] = new[] { 0x007Bu },
+            [0x2040u] = new[] { 0x203Fu },
+            [0x2046u] = new[] { 0x2045u },
+            [0x2235u] = new[] { 0x2234u },
+        };
+
         private static readonly Dictionary<uint, uint[]> ExtraHomoglyphs = new()
         {
             [0x1d6e2u] = new[] { 0x41u },
