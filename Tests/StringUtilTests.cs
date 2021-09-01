@@ -43,9 +43,19 @@ namespace Tests
         [TestCase("çöćķåťřĩĉȅ", "cockatrice")]
         [TestCase("с⁪◌ck⁬åťřĩĉȅ", "cockatrice")]
         [TestCase("jò̵͗s̷̑͠ẻ̵͝p̸̆̂h̸͐̿", "joseph")]
+        [TestCase("ϲоϲκаτгіϲе", "cockatrice")]
+        [TestCase("ѕһаκеѕреаге", "shakespeare")]
+        [TestCase("Τһе ԛυіϲκ Ьгоѡɴ ғох јυⅿрѕ оⅴег τһе ⅼаzу ԁоɡ", "The quick brown fox jumps over the lazy dog")]
+        [TestCase("ⅿ", "m")]
+        [TestCase("τ", "t")]
+        [TestCase("ғ", "f")]
+        [TestCase("0n", "on")]
+        [TestCase("ⓢⓗⓐⓚⓔⓢⓟⓔⓐⓡⓔ", "shakespeare")]
         public void HomoglyphDetectionTest(string strA, string strB)
         {
-            Assert.That(strA.StripInvisibleAndDiacritics().ToCanonicalForm(), Is.EqualTo(strB));
+            var stripped = strA.StripInvisibleAndDiacritics();
+            var canonical = stripped.ToCanonicalForm();
+            Assert.That(canonical.ToLower(), Is.EqualTo(strB.ToCanonicalForm().ToLower()));
         }
 
         [TestCase("jò̵͗s̷̑͠ẻ̵͝p̸̆̂h̸͐̿", "joseph")]
