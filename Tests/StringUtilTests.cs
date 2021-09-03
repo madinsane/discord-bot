@@ -51,6 +51,7 @@ namespace Tests
         [TestCase("ғ", "f")]
         [TestCase("0n", "on")]
         [TestCase("ⓢⓗⓐⓚⓔⓢⓟⓔⓐⓡⓔ", "shakespeare")]
+        [TestCase("🇺🇼🇺", "uwu")]
         public void HomoglyphDetectionTest(string strA, string strB)
         {
             var stripped = strA.StripInvisibleAndDiacritics();
